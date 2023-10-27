@@ -1,8 +1,8 @@
 from pypdf import PdfReader 
 import sys
-#input syntax: start, end, output file name
+#input syntax: start, end, output file name, pdf name
 
-reader = PdfReader("test.pdf")
+reader = PdfReader(sys.argv[4])
 
 def writePagesToFile(startPage, endPage, fileName) :
     outputFile = open(fileName, "w") #overwrite old file contens

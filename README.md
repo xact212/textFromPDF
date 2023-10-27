@@ -13,6 +13,6 @@ To use this program:
     there shold be a bar in the middle with a folder icon to the left of it.
     Click on the white space of this bar and copy the filepath you have 
     selected to paste it into your Command Line Interface
-    3. Now run this command: python3 textFromPDF.py [starting page] [ending page] [output filename].txt
+    3. Now run this command: python3 textFromPDF.py [starting page] [ending page] [output filename].txt [input filename].pdf
     4. You can now access the text the progam output by opening the output text file
 
