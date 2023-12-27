@@ -5,8 +5,38 @@ import sys
 
 doc = fitz.open(sys.argv[4])
 
+#this map tells the program what to replace special characters with
 specialCharacterMap = {
+    "ü" : "u",
+    "ä" : "a",
+    "ö" : "o",
+    "ë" : "e",
+    "ÿ" : "y",
+    "ü" : "u",
 
+    "Σ" : "summation",
+    "±" : "plus-minus",
+    "∫" : "integral",
+    "∪" : "union",
+    "∩" : "intersection",
+    "∈" : "element of",
+    "°" : "degrees",
+
+    "é" : "e",
+
+    "℧" : "Mho",
+    "Å" : "Angstrom",
+
+    "ﬀ": "ff",
+    "ﬁ": "fi",
+    "ﬂ": "fl",
+    "ﬃ": "ffi",
+    "ﬄ": "ffl",
+    "ﬅ": "ft",
+    "ﬆ": "st",
+    "Ꜳ": "AA",
+    "Æ": "AE",
+    "ꜳ": "aa"
 }
 
 uppercaseChars = ["A", "B", "C", "D", "E", "F", "G", "H", "I" ,"J", "K" ,"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -71,10 +101,8 @@ def writePagesToFile(startPage, endPage, fileName):
             for l in b["lines"]:  # iterate through the text lines
                 for s in l["spans"]:  # iterate through the text spans
                     for char in s["text"]:
-
-                        #prevInPTag = checkForParagraph(prevX, s["origin"][0], outputFile, prevInPTag, pTagThresh)
-                        #prevX = s["origin"][0]
-                        
+                        # if char == " ":
+                        #     print("open space after: ", s["text"])
                         if (prevChar in lowercaseChars or prevChar in nums) and char in uppercaseChars: #add newlines
                             outputFile.write("\n")
                         if prevChar == "." and char == " ":
@@ -88,23 +116,22 @@ def writePagesToFile(startPage, endPage, fileName):
                         elif prevInEmph:
                             outputFile.write("</em>")
                             prevInEmph = not prevInEmph
+                        try: #try mapping character with character map. if it succeeds, replace with replacement character
+                            replacement = specialCharacterMap[char]
+                            outputFile.write(replacement)
+                            prevChar = replacement
+                        except:
+                            pass
                         try: #don't include non ascii characters and print them out for debugging
                             char.encode("ascii")
                         except:
                             print(char)
                             continue
-                        try: #try mapping character with character map. if it succeeds, replace with replacement character
-                            replacement = specialCharacterMap[char]
-                            outputFile.write(replacement)
-                            prevChar = replacement
-                            continue
-                        except:
-                            pass
                         outputFile.write(char)
                         prevChar = char
                     
                     
-        outputFile.write("</HTML>")
+    outputFile.write("</HTML>")
     
 
 print("Writing to file...")
