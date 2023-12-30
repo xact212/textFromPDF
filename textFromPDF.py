@@ -39,7 +39,10 @@ specialCharacterMap = {
 
     "&" : "and",
     "©" : "copyright",
-    "—" : "... "
+    "—" : "... ",
+    "’" : "'",
+    "”" : "\"",
+    "“" : "\""
 }
 
 uppercaseChars = ["A", "B", "C", "D", "E", "F", "G", "H", "I" ,"J", "K" ,"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -90,18 +93,18 @@ def writePagesToFile(startPage, endPage, fileName):
     prevChar = ""
     prevX = 0
     pTagThresh = 10
+    footerThresh = 500
     for page in range(startPage, endPage): #adds additional text deliminating page numbers
         outputFile.write("\n<h4>Page " + str(page + 1) + "</h4>\n")
 
         # read page text as a dictionary, suppressing extra spaces in CJK fonts
         blocks = doc[page].get_text("dict", flags=11)["blocks"]
+        footer = "\n<footer>\n"
         for b in blocks:  # iterate through the text blocks
             outputFile.write("\n<p>\n")
             for l in b["lines"]:  # iterate through the text lines
                 for s in l["spans"]:  # iterate through the text spans
                     for char in s["text"]:
-                        # if char == " ":
-                        #     print("open space after: ", s["text"])
                         if (prevChar in lowercaseChars or prevChar in nums) and char in uppercaseChars: #add newlines
                             outputFile.write("\n")
                         if prevChar == "." and char == " ":
@@ -125,10 +128,16 @@ def writePagesToFile(startPage, endPage, fileName):
                             char.encode("ascii")
                         except:
                             print(char)
+                            continue
+                        if s["origin"][1] >= footerThresh:
+                            footer += char
+                            continue
                         outputFile.write(char)
                         prevChar = char
             outputFile.write("\n</p>\n")
-                    
+        footer += "\n</footer>\n"
+        if footer != "\n<footer>\n\n</footer>\n":
+            outputFile.write(footer)
                     
     outputFile.write("</HTML>")
     
