@@ -1,8 +1,6 @@
 import fitz
 import sys
 
-#input syntax: start, end, output file name, pdf name
-
 doc = fitz.open(sys.argv[4])
 
 #this map tells the program what to replace special characters with
@@ -13,6 +11,7 @@ specialCharacterMap = {
     "ë" : "e",
     "ÿ" : "y",
     "ü" : "u",
+    "ï" : "i",
 
     "Σ" : "summation",
     "±" : "plus-minus",
@@ -27,16 +26,20 @@ specialCharacterMap = {
     "℧" : "Mho",
     "Å" : "Angstrom",
 
-    "ﬀ": "ff",
-    "ﬁ": "fi",
-    "ﬂ": "fl",
-    "ﬃ": "ffi",
-    "ﬄ": "ffl",
-    "ﬅ": "ft",
-    "ﬆ": "st",
-    "Ꜳ": "AA",
-    "Æ": "AE",
-    "ꜳ": "aa"
+    "ﬀ" : "ff",
+    "ﬁ" : "fi",
+    "ﬂ" : "fl",
+    "ﬃ" : "ffi",
+    "ﬄ" : "ffl",
+    "ﬅ" : "ft",
+    "ﬆ" : "st",
+    "Ꜳ" : "AA",
+    "Æ" : "AE",
+    "ꜳ" : "aa",
+
+    "&" : "and",
+    "©" : "copyright",
+    "—" : "... "
 }
 
 uppercaseChars = ["A", "B", "C", "D", "E", "F", "G", "H", "I" ,"J", "K" ,"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -93,11 +96,7 @@ def writePagesToFile(startPage, endPage, fileName):
         # read page text as a dictionary, suppressing extra spaces in CJK fonts
         blocks = doc[page].get_text("dict", flags=11)["blocks"]
         for b in blocks:  # iterate through the text blocks
-            if not prevInPTag:
-                outputFile.write("\n<p>\n")
-            else:
-                outputFile.write("\n</p>\n")
-            prevInPTag = not prevInPTag
+            outputFile.write("\n<p>\n")
             for l in b["lines"]:  # iterate through the text lines
                 for s in l["spans"]:  # iterate through the text spans
                     for char in s["text"]:
@@ -126,9 +125,9 @@ def writePagesToFile(startPage, endPage, fileName):
                             char.encode("ascii")
                         except:
                             print(char)
-                            continue
                         outputFile.write(char)
                         prevChar = char
+            outputFile.write("\n</p>\n")
                     
                     
     outputFile.write("</HTML>")
