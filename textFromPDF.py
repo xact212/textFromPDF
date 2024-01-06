@@ -95,7 +95,7 @@ def writePagesToFile(startPage, endPage, fileName):
     pTagThresh = 10
     footerThresh = 500
     for page in range(startPage, endPage): #adds additional text deliminating page numbers
-        outputFile.write("\n<h4>Page " + str(page + 1) + "</h4>\n")
+        outputFile.write("\n<b>Page " + str(page + 133) + "</b>\n")
 
         # read page text as a dictionary, suppressing extra spaces in CJK fonts
         blocks = doc[page].get_text("dict", flags=11)["blocks"]
@@ -122,22 +122,16 @@ def writePagesToFile(startPage, endPage, fileName):
                             replacement = specialCharacterMap[char]
                             outputFile.write(replacement)
                             prevChar = replacement
+                            continue
                         except:
                             pass
                         try: #don't include non ascii characters and print them out for debugging
                             char.encode("ascii")
                         except:
                             print(char)
-                            continue
-                        if s["origin"][1] >= footerThresh:
-                            footer += char
-                            continue
                         outputFile.write(char)
                         prevChar = char
             outputFile.write("\n</p>\n")
-        footer += "\n</footer>\n"
-        if footer != "\n<footer>\n\n</footer>\n":
-            outputFile.write(footer)
                     
     outputFile.write("</HTML>")
     
