@@ -39,7 +39,6 @@ specialCharacterMap = {
 
     "&" : "and",
     "©" : "copyright",
-    "—" : "... ",
     "’" : "'",
     "”" : "\"",
     "“" : "\""
@@ -81,7 +80,7 @@ def checkForParagraph(prevX, currX, outFH, prevInPTag, pTagThresh):
     else:
         return prevInPTag
 
-def writePagesToFile(startPage, endPage, fileName):
+def writePagesToFile(startPage, endPage, fileName, pageOffset):
     outputFile = open(fileName, "w") #overwrite old file contens
     outputFile.write("")
 
@@ -93,9 +92,9 @@ def writePagesToFile(startPage, endPage, fileName):
     prevChar = ""
     prevX = 0
     pTagThresh = 10
-    footerThresh = 500
+    footerThresh = 500 
     for page in range(startPage, endPage): #adds additional text deliminating page numbers
-        outputFile.write("\n<b>Page " + str(page + 133) + "</b>\n")
+        outputFile.write("\n<b>Page " + str(page + pageOffset) + "</b>\n")
 
         # read page text as a dictionary, suppressing extra spaces in CJK fonts
         blocks = doc[page].get_text("dict", flags=11)["blocks"]
@@ -107,9 +106,6 @@ def writePagesToFile(startPage, endPage, fileName):
                     for char in s["text"]:
                         if (prevChar in lowercaseChars or prevChar in nums) and char in uppercaseChars: #add newlines
                             outputFile.write("\n")
-                        if prevChar == "." and char == " ":
-                            outputFile.write("\n")
-                            continue
                         font_properties = { "flags" : flags_decomposer(s["flags"]) }
                         if "italic" in font_properties["flags"] or "bold" in font_properties["flags"]: #add em tags for bold/italic
                             if not prevInEmph:
@@ -137,6 +133,6 @@ def writePagesToFile(startPage, endPage, fileName):
     
 
 print("Writing to file...")
-writePagesToFile(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
+writePagesToFile(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3], int(sys.argv[5]))
 print("Successfully wrote to file!")
 
